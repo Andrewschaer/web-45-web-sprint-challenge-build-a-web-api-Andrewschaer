@@ -1,6 +1,6 @@
 const express = require('express');
 const Projects = require('./projects-model');
-// const { } = require('./projects-middleware');
+const { validateProjectId } = require('./projects-middleware');
 
 const router = express.Router();
 
@@ -14,9 +14,16 @@ router.get('/', (req, res, next) => {
         });
 });
 
-router.get('/:id', (req, res) => {
-
-})
+router.get('/:id', validateProjectId, (req, res, next) => {
+    Projects.get(req.params.id)
+        .then(project => {
+            delete project.actions;
+            res.status(200).json(project);
+        })
+        .catch(error => {
+            next(error);
+        });
+});
 
 router.post('/', (req, res) => {
 
