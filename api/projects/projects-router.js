@@ -35,18 +35,34 @@ router.post('/', validateProject, (req, res, next) => {
         });
 });
 
-router.put('/:id', (req, res, next) => {
-    
-        throw new Error('ERROR!');
-
+router.put('/:id', validateProjectId, validateProject, (req, res, next) => {
+    Projects.update(req.params.id, req.body)
+        .then(updatedProject => {
+            res.status(200).json(updatedProject);
+        })
+        .catch(error => {
+            next(error);
+        });
 });
 
-router.delete('/:id', (req, res, next) => {
-
+router.delete('/:id', validateProjectId, (req, res, next) => {
+    Projects.remove(req.params.id)
+        .then( () => {
+            res.status(200).json();
+        })
+        .catch(error => {
+            next(error);
+        });
 });
 
-router.get('/:id/actions', (req, res, next) => {
-
+router.get('/:id/actions', validateProjectId, (req, res, next) => {
+    Projects.getProjectActions(req.params.id)
+        .then(projActionsList =>{
+            res.status(200).json(projActionsList);
+        })
+        .catch(error => {
+            next(error);
+        });
 });
 
 router.use((err, req, res, next) => {
