@@ -1,6 +1,6 @@
 const express = require('express');
 const Projects = require('./projects-model');
-const { validateProjectId } = require('./projects-middleware');
+const { validateProjectId, validateProject } = require('./projects-middleware');
 
 const router = express.Router();
 
@@ -25,31 +25,39 @@ router.get('/:id', validateProjectId, (req, res, next) => {
         });
 });
 
-router.post('/', (req, res) => {
+router.post('/', validateProject, (req, res, next) => {
+    Projects.insert(req.body)
+        .then(newProject => {
+            res.status(200).json(newProject);
+        })
+        .catch(error => {
+            next(error);
+        });
+});
 
-})
+router.put('/:id', (req, res, next) => {
+    
+        throw new Error('ERROR!');
 
-router.put('/:id', (req, res) => {
+});
 
-})
+router.delete('/:id', (req, res, next) => {
 
-router.delete('/:id', (req, res) => {
+});
 
-})
+router.get('/:id/actions', (req, res, next) => {
 
-router.get('/:id/actions', (req, res) => {
-
-})
+});
 
 router.use((err, req, res, next) => {
     if(!err.message) {
-        err.message = 'An error occurred while processing your request';
+        err.message = 'Request failed: An error occurred while processing your request';
     }
     console.log(err.message);
     res.status(err.status || 500).json({
       message: err.message
     });
-  });
+});
 
 
 module.exports = router;
